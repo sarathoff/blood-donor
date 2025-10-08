@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🩸 Blood Donor Connect India</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      font-size: 2.5em;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .header p {
+      font-size: 1.2em;
+      margin: 10px 0;
+      opacity: 0.9;
+    }
+    .forms-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    @media (max-width: 768px) {
+      .forms-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .form-card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .form-card h2 {
+      color: #d63031;
+      margin-top: 0;
+      font-size: 1.5em;
+      border-bottom: 3px solid #ff7675;
+      padding-bottom: 10px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #2d3436;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #ff7675;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(45deg, #d63031, #e17055);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(214, 48, 49, 0.3);
+    }
+    .results-container {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .donor-card {
+      background: linear-gradient(135deg, #74b9ff, #0984e3);
+      color: white;
+      margin: 15px 0;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .donor-card:hover {
+      transform: translateY(-3px);
+    }
+    .donor-name {
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .donor-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .info-item {
+      background: rgba(255,255,255,0.2);
+      padding: 8px;
+      border-radius: 6px;
+    }
+    .no-results {
+      text-align: center;
+      color: #636e72;
+      font-size: 1.1em;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🩸 Blood Donor Connect India</h1>
+      <p>Connecting blood donors across India - Save lives, donate blood</p>
+    </div>
+
+    <div class="forms-container">
+      <div class="form-card">
+        <h2>🩸 Register as Donor</h2>
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" required>
+          </div>
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" id="age" min="18" max="65" required>
+          </div>
+          <div class="form-group">
+            <label for="bloodGroup">Blood Group</label>
+            <select id="bloodGroup" required>
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="state">State</label>
+            <select id="state" required>
+              <option value="">Select State</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Assam">Assam</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Chhattisgarh">Chhattisgarh</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Goa">Goa</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Haryana">Haryana</option>
+              <option value="Himachal Pradesh">Himachal Pradesh</option>
+              <option value="Jharkhand">Jharkhand</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Odisha">Odisha</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Telangana">Telangana</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="West Bengal">West Bengal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="city">City</label>
+            <select id="city" required>
+              <option value="">Select City</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" pattern="[0-9]{10}" required>
+          </div>
+          <button type="submit">Register as Donor</button>
+        </form>
+      </div>
+
+      <div class="form-card">
+        <h2>🔍 Find Donors</h2>
+        <form id="searchForm">
+          <div class="form-group">
+            <label for="searchGroup">Blood Group Needed</label>
+            <select id="searchGroup" required>
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="searchState">State</label>
+            <select id="searchState" required>
+              <option value="">Select State</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Assam">Assam</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Chhattisgarh">Chhattisgarh</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Goa">Goa</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Haryana">Haryana</option>
+              <option value="Himachal Pradesh">Himachal Pradesh</option>
+              <option value="Jharkhand">Jharkhand</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Odisha">Odisha</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Telangana">Telangana</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="West Bengal">West Bengal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="searchCity">City</label>
+            <select id="searchCity" required>
+              <option value="">Select City</option>
+            </select>
+          </div>
+          <button type="submit">Find Donors</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="results-container">
+      <div id="results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 🧠 Supabase connection
+    const SUPABASE_URL = "https://rkhftbmarquofvbcauoz.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJraGZ0Ym1hcnF1b2Z2YmNhdW96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mjg3MjAsImV4cCI6MjA3NTUwNDcyMH0.QLGJRvBHsdE4A2BhYCi4SCXkqTulHZQ-z-9b3waFebQ";
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // City data for Indian states
+    const cities = {
+      "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool"],
+      "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon"],
+      "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia"],
+      "Chhattisgarh": ["Raipur", "Bhilai", "Korba", "Bilaspur", "Durg"],
+      "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi"],
+      "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda"],
+      "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
+      "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Karnal"],
+      "Himachal Pradesh": ["Shimla", "Dharamshala", "Solan", "Mandi", "Kullu"],
+      "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar"],
+      "Karnataka": ["Bangalore", "Mysore", "Hubli", "Mangalore", "Belgaum"],
+      "Kerala": ["Kochi", "Thiruvananthapuram", "Kozhikode", "Thrissur", "Kollam"],
+      "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain"],
+      "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad"],
+      "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur"],
+      "Punjab": ["Chandigarh", "Ludhiana", "Amritsar", "Jalandhar", "Patiala"],
+      "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer"],
+      "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+      "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam"],
+      "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Varanasi"],
+      "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri"]
+    };
+
+    // Update cities when state changes
+    function updateCities(stateSelect, citySelect) {
+      stateSelect.addEventListener('change', function() {
+        const selectedState = this.value;
+        citySelect.innerHTML = '<option value="">Select City</option>';
+        if (selectedState && cities[selectedState]) {
+          cities[selectedState].forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+          });
+        }
+      });
+    }
+
+    // Initialize city dropdowns
+    updateCities(document.getElementById('state'), document.getElementById('city'));
+    updateCities(document.getElementById('searchState'), document.getElementById('searchCity'));
+
+    // 🩸 Register donor
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const donor = {
+        name: document.getElementById("name").value,
+        age: parseInt(document.getElementById("age").value),
+        blood_group: document.getElementById("bloodGroup").value,
+        state: document.getElementById("state").value,
+        city: document.getElementById("city").value,
+        phone: document.getElementById("phone").value
+      };
+      const { error } = await supabaseClient.from("donors").insert([donor]);
+      if (error) alert("Error: " + error.message);
+      else {
+        alert("✅ Thank you for registering as a blood donor!");
+        e.target.reset();
+      }
+    });
+
+    // 🔍 Search donors
+    document.getElementById("searchForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const group = document.getElementById("searchGroup").value;
+      const state = document.getElementById("searchState").value;
+      const city = document.getElementById("searchCity").value;
+      
+      const { data, error } = await supabaseClient
+        .from("donors")
+        .select("*")
+        .eq("blood_group", group)
+        .eq("state", state)
+        .eq("city", city);
+
+      const results = document.getElementById("results");
+      results.innerHTML = "";
+      
+      if (error) {
+        results.innerHTML = '<div class="no-results">Error loading donors.</div>';
+      } else if (data.length === 0) {
+        results.innerHTML = '<div class="no-results">No donors found in your area. Try searching in nearby cities.</div>';
+      } else {
+        data.forEach(d => {
+          const card = document.createElement("div");
+          card.className = "donor-card";
+          card.innerHTML = `
+            <div class="donor-name">${d.name} (${d.age} years)</div>
+            <div class="donor-info">
+              <div class="info-item"><strong>🩸 ${d.blood_group}</strong></div>
+              <div class="info-item">📍 ${d.city}, ${d.state}</div>
+              <div class="info-item">📞 ${d.phone}</div>
+              <div class="info-item">📅 Available</div>
+            </div>
+          `;
+          results.appendChild(card);
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
